@@ -1,0 +1,439 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --orange:      #f26522;
+  --orange-dark: #d4531a;
+  --shadow-card: 0 8px 40px rgba(0,0,0,0.13);
+  --shadow-btn:  0 4px 18px rgba(242,101,34,0.45);
+  --transition:  0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+html,body {
+    margin: 0;
+    width: 100%;
+    /* Lock body strictly to device height */
+    height: 100vh;
+    height: 100dvh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f0f0f0;
+    /* Physically prevent scrollbars from ever appearing */
+    overflow: hidden;
+}
+
+/* Full viewport wrapper */
+.page-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+/* Card adapts to device size natively without calc() */
+.booth-card {
+    width: 100%;
+    max-width: 420px;
+    /* This allows the card to shrink smoothly when space runs out */
+    min-height: 0;
+    flex-shrink: 1;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Screen containers */
+.screen {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen[aria-hidden="true"] {
+  display: none;
+}
+
+/* Layout banner images */
+.layout-panel {
+  width: 100%;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+.layout-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Camera area */
+.camera-area {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1024 / 840;
+  position: relative;
+  background: #111;
+  overflow: hidden;
+  /* Squishes the camera feed slightly if screen is too short, keeping layout intact */
+  flex-shrink: 1; 
+  min-height: 0;
+}
+
+#videoFeed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scaleX(-1);
+}
+
+/* Countdown */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.countdown-overlay.active {
+  background: rgba(0,0,0,0.18);
+}
+
+.countdown-number {
+  font-size: 120px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 4px 32px rgba(0,0,0,0.6), 0 0 60px var(--orange);
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.countdown-number.pop {
+  animation: countdown-pop 0.85s cubic-bezier(0.22,0.61,0.36,1) forwards;
+}
+
+@keyframes countdown-pop {
+  0%   { opacity: 0; transform: scale(0.4); }
+  20%  { opacity: 1; transform: scale(1.15); }
+  50%  { opacity: 1; transform: scale(1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+/* Flash */
+.flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.flash-overlay.flash {
+  animation: camera-flash 0.5s ease-out forwards;
+}
+
+@keyframes camera-flash {
+  0%   { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Camera loading */
+.camera-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  z-index: 10;
+  transition: opacity var(--transition);
+}
+
+.camera-status.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.status-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Capture button below card */
+.capture-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* Protects button from shrinking */
+}
+
+.capture-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 36px;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: background var(--transition), transform var(--transition);
+  user-select: none;
+}
+
+.capture-btn:hover:not(:disabled) {
+  background: var(--orange-dark);
+  transform: translateY(-2px);
+}
+
+.capture-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.capture-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.capture-hint {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Result screen */
+.result-photo-wrap {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: block; /* Explicitly block to allow natural child sizing */
+  /* Allow scrolling inside the photo container if the screen is short */
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Hide the scrollbar for a seamless, app-like look */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.result-photo-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.result-photo {
+  width: 100%;
+  min-width: 100%; /* Force it to stretch edge-to-edge */
+  height: auto;
+  display: block;
+  object-fit: cover;
+  margin: 0;
+  padding: 0;
+}
+
+.result-qr-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: #fff3ec;
+  border-top: 2px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+.qr-box {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border: 2px solid var(--orange);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.qr-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.qr-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.qr-sub {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.result-actions {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background var(--transition), transform var(--transition);
+  user-select: none;
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn--download {
+  background: var(--orange);
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn--download:hover { background: var(--orange-dark); }
+
+.btn--retake {
+  background: #f5f5f5;
+  color: #1a1a1a;
+  border: 1.5px solid #e8e8e8;
+}
+
+.btn--retake:hover { background: #ebebeb; }
+
+.btn--next {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.btn--next:hover { background: #333; }
+
+/* Processing overlay */
+.processing-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  backdrop-filter: blur(4px);
+}
+
+.processing-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.processing-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+.processing-card p {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.processing-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(242,101,34,0.15);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  max-width: 360px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 200;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast--error {
+  background: #ff3b30;
+  color: #fff;
+}
+
+.screen--fade-in {
+  animation: fade-in 0.4s ease forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

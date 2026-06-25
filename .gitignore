@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.venv/
+ENV/
+
+# Environment Variables
+.env
+.env.*
+
+# Flask
+instance/
+.webassets-cache
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+
+# SQLite
+*.db
+*.sqlite3
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.cache/
+
+# Generated files
+static/outputs/*
+!static/outputs/.gitkeep
+
+static/qrcodes/*
+!static/qrcodes/.gitkeep
+
+# Uploads (if applicable)
+uploads/*
+!uploads/.gitkeep
+
+# Secrets
+config.local.py
+*.pem
+*.key
+
+# Temporary files
+*.tmp
+*.bak
