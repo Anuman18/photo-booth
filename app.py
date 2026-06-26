@@ -59,6 +59,10 @@ def layout_image(name):
         return "Not found", 404
     return send_from_directory(Config.LAYOUTS_FOLDER, name, mimetype="image/png")
 
+@app.route("/test")
+def test():
+    return "Backend Working"
+
 
 @app.route("/capture", methods=["POST"])
 def capture():
