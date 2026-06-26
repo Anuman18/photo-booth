@@ -301,12 +301,18 @@ const API = (() => {
    * @returns {Promise<Object>} — { photo_url, qr_url, download_url }
    */
   const sendCapture = async (imageDataURL) => {
-    const response = await fetch("https://photo-booth-dgmo.onrender.com", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ image: imageDataURL }),
-    });
-
+const response = await fetch(
+    "https://photo-booth-dgmo.onrender.com/capture",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            image: imageDataURL
+        })
+    }
+);
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(err.error || `Server error ${response.status}`);
