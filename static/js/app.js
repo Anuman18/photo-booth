@@ -301,7 +301,7 @@ const API = (() => {
    * @returns {Promise<Object>} — { photo_url, qr_url, download_url }
    */
   const sendCapture = async (imageDataURL) => {
-    const response = await fetch("/capture", {
+    const response = await fetch("https://photo-booth-dgmo.onrender.com", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ image: imageDataURL }),
