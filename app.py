@@ -7,27 +7,41 @@ from datetime import datetime
 
 import qrcode
 from PIL import Image
+
 from flask import (
-    Flask, render_template, request,
-    jsonify, send_from_directory, url_for, send_file
+    Flask,
+    render_template,
+    request,
+    jsonify,
+    send_from_directory,
+    url_for
 )
-
-from config import Config
-
 
 from flask_cors import CORS
 
-app = Flask(__name__)
+from config import Config
 
-CORS(app, resources={
-    r"/*": {
-        "origins": ["https://seagullventure.com"]
-    }
-})
+# -------------------------------------------------
+# Flask App
+# -------------------------------------------------
 
 app = Flask(__name__)
+
 app.config.from_object(Config)
 Config.init_app(app)
+
+CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": [
+                "https://seagullventure.com",
+                "https://www.seagullventure.com"
+            ]
+        }
+    },
+    supports_credentials=True
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
